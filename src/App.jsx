@@ -1,35 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useEffect, useState } from "react";
+import Navbar from "./sections/Navbar";
+import Hero from "./sections/Hero";
+import ServiceSummary from "./sections/ServiceSummary";
+import Services from "./sections/Services";
+import ReactLenis from "lenis/react";
+import About from "./sections/About";
+import Works from "./sections/Works";
+import ContactSummary from "./sections/ContactSummary";
+import Contact from "./sections/Contact";
+import { useProgress } from "@react-three/drei";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const { progress } = useProgress();
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    if (progress === 100) {
+      setIsReady(true);
+    }
+  }, [progress]);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <ReactLenis root className="relative w-screen min-h-screen overflow-x-auto">
+      {!isReady && (
+        <div className="fixed inset-0 z-[999] flex flex-col items-center justify-center bg-black text-white transition-opacity duration-700 font-light">
+          <p className="mb-4 text-xl tracking-widest animate-pulse">
+            Loading {Math.floor(progress)}%
+          </p>
+          <div className="relative h-1 overflow-hidden rounded w-60 bg-white/20">
+            <div
+              className="absolute top-0 left-0 h-full transition-all duration-300 bg-white"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+        </div>
+      )}
+      <div
+        className={`${
+          isReady ? "opacity-100" : "opacity-0"
+        } transition-opacity duration-1000`}
+      >
+        <Navbar />
+        <Hero />
+        <ServiceSummary />
+        <Services />
+        <About />
+        <Works />
+        <ContactSummary />
+        <Contact />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    </ReactLenis>
+  );
+};
 
-export default App
+export default App;
